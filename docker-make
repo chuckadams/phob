@@ -1,0 +1,29 @@
+#!/bin/sh
+
+docker create -ti --name=phob-tmp phob:latest true >/dev/null
+
+for file in \
+	Makefile \
+	libtool \
+  ext/fileinfo/libmagic/config.h \
+  ext/bcmath/libbcmath/src/config.h \
+  ext/mbstring/libmbfl/config.h \
+  ext/pcre/pcre2lib/config.h \
+	sapi/fpm/fpm/fpm_config.h \
+	main/php_config.h \
+	Zend/zend_config.h \
+	ext/opcache/jit/vtune/ittnotify_config.h \
+	ext/date/lib/timelib_config.h \
+	main/build-defs.h \
+	ext/opcache/minilua \
+	main/internal_functions_cli.c
+do
+	docker cp phob-tmp:/build/phob/$file $(dirname $file)
+done
+
+docker rm -f phob-tmp >/dev/null
+
+docker run -i -t --mount type=bind,source=$(pwd),target=/build/phob phob make clean
+docker run -i -t --mount type=bind,source=$(pwd),target=/build/phob phob make -j$(nproc)
+
+

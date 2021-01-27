@@ -1,5 +1,4 @@
 #!/bin/sh
-
 set -o errexit
 
 export NPROCS=$(nproc 2>/dev/null || echo 1)
@@ -8,11 +7,16 @@ export CXX='ccache clang'
 export LD='ld.lld'
 export NO_INTERACTION=1
 
-make distclean 2>/dev/null || true
+#make clean
+#make -j$NPROCS
+#make test
+#exit 0
+
+################
 
 ./buildconf
-
 ./configure --prefix=/opt/phob \
+	--with-pic \
 	--enable-fpm \
 	--enable-phpdbg \
 	--enable-debug \
@@ -53,9 +57,9 @@ make distclean 2>/dev/null || true
 	--with-zip \
 	--enable-mysqlnd
 
-sed -i "s/run-tests.php -n -c/run-tests.php -j$NPROCS -n -c/" Makefile
-
 make -j$NPROCS
+
+sed -i "s/run-tests.php -n -c/run-tests.php -j$NPROCS -n -c/" Makefile
 make test
 
 

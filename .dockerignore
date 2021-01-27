@@ -24,8 +24,6 @@ conftest*
 /main/internal_functions.c
 /main/internal_functions_cli.c
 
-libtool
-Makefile
 Makefile.fragments
 Makefile.objects
 
