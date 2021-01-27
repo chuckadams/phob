@@ -1,11 +1,4 @@
-# These files are generated during building or development and are intentionally
-# untracked to ignore by Git. For other development environment specific files,
-# such as editor configuration, a good practice is to exclude them using the
-# .git/info/exclude in the cloned repository or a global .gitignore file.
-
-# ------------------------------------------------------------------------------
-# Common files ignored across the repository
-# ------------------------------------------------------------------------------
+/tmp/
 
 # Backup copies created by various editors or development tools
 *~
@@ -40,6 +33,7 @@
 
 # Standard object files generated during build process
 *.o
+*.sl
 
 # Cache directories created by Autoconf tools
 autom4te.cache/

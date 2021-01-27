@@ -1,6 +1,7 @@
 #!/bin/bash
 set -o errexit
 
+docker rm -f phob-tmp >/dev/null 2>&1 || true
 docker create -ti --name=phob-tmp phob:latest true >/dev/null
 trap 'docker rm -f phob-tmp >/dev/null' EXIT
 
@@ -25,18 +26,22 @@ do
 	docker cp phob-tmp:/build/phob/$file $(dirname $file)
 done
 
-
-docker run --mount type=bind,source=$(pwd),target=/build/phob phob make clean
-
 mkdir -p /tmp/build/phob/ccache
+
+#docker run --mount type=bind,source=$(pwd),target=/build/phob phob make clean
+#docker run \
+#  --mount type=bind,source=$(pwd),target=/build/phob \
+#  --mount type=bind,source=/tmp/build/phob/ccache,target=/tmp/ccache \
+#  phob sh -c 'CCACHE_DIR=/tmp/ccache make -j$(nproc)'
 
 docker run \
   --mount type=bind,source=$(pwd),target=/build/phob \
   --mount type=bind,source=/tmp/build/phob/ccache,target=/tmp/ccache \
-  phob sh -c 'CCACHE_DIR=/tmp/ccache make -j$(nproc)'
+  phob sh -c "RUN_TESTS=$RUN_TESTS ./build.sh"
 
-[[ -z $RUN_TESTS ]] && exit 0
-sed -i "s/run-tests.php -n -c/run-tests.php -j\$\$(nproc) -n -c/" Makefile
-docker run --mount type=bind,source=$(pwd),target=/build/phob phob make test
+
+#[[ -z $RUN_TESTS ]] && exit 0
+#sed -i "s/run-tests.php -n -c/run-tests.php -j\$\$(nproc) -n -c/" Makefile
+#docker run --mount type=bind,source=$(pwd),target=/build/phob phob make test
 
 
