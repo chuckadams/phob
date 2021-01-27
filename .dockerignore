@@ -150,12 +150,12 @@ tmp-php.ini
 /lcov_html/
 /php_lcov.info
 
-**//*.tar.gz
-**//*.tar.bz2
-**//*.tar.xz
-**//*.tar.gz.asc
-**//*.tar.bz2.asc
-/*.tar.xz.asc
+**/*.tar.gz
+**/*.tar.bz2
+**/*.tar.xz
+**/*.tar.gz.asc
+**/*.tar.bz2.asc
+**/*.tar.xz.asc
 
 /ext/oci8/oci8_dtrace_gen.h
 /ext/oci8/oci8_dtrace_gen.h.bak

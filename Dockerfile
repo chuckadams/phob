@@ -3,8 +3,11 @@ FROM alpine:3.13 as phob-build
 RUN apk add --no-cache \
     autoconf \
     bison \
+    ccache \
+    clang \
     g++ \
     gcc \
+    lld \
     make \
     re2c \
 	argon2-dev \
@@ -27,13 +30,19 @@ RUN apk add --no-cache \
 	readline-dev \
 	sqlite-dev
 
-RUN adduser --disabled-password --no-create-home build
+RUN adduser --disabled-password build
 COPY --chown=build . /build/phob
 
 USER build
 WORKDIR /build/phob
 
-RUN ./buildconf && CC=clang CXX=clang++ LD=ld.lld ./configure \
+RUN make distclean || true
+
+#RUN ./buildconf && ./configure \
+RUN ./buildconf && \
+  CC='ccache clang' CXX='ccache clang++' LD=ld.lld \
+  ./configure \
+    --with-pic \
     --prefix=/opt/phob \
     --enable-fpm \
     --enable-phpdbg \
@@ -73,10 +82,11 @@ RUN ./buildconf && CC=clang CXX=clang++ LD=ld.lld ./configure \
     --enable-sysvsem \
     --enable-sysvshm \
     --with-zip \
-    --enable-mysqlnd
+    --enable-mysqlnd \
+    || { cat config.log; exit 1; }
 
 RUN make clean
-RUN make -j$(nproc)
+RUN CCACHE_DIR=/tmp/ccache make -j$(nproc)
 
 # RUN ./sapi/cli/php -m
 # RUN sed -i "s/run-tests.php -n -c/run-tests.php -j$(nproc) -n -c/" Makefile && make test
