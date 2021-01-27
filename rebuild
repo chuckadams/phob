@@ -2,8 +2,9 @@
 
 set -o errexit
 
-export CC='ccache cc'
-export CXX='ccache g++'
+export NPROCS=$(nproc 2>/dev/null || echo 1)
+export CC='ccache clang'
+export CXX='ccache clang'
 export NO_INTERACTION=1
 
 make distclean 2>/dev/null || true
@@ -12,8 +13,9 @@ make distclean 2>/dev/null || true
 
 ./configure --prefix=/opt/phob
 
-make -j12
+sed -i "s/run-tests.php -n -c/run-tests.php -j$NPROCS -n -c/" Makefile
+
+make -j$NPROCS
 make test
-make install
 
 
