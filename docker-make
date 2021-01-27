@@ -1,9 +1,8 @@
 #!/bin/bash
 set -o errexit
 
-make distclean
-
 docker create -ti --name=phob-tmp phob:latest true >/dev/null
+trap 'docker rm -f phob-tmp >/dev/null' EXIT
 
 for file in \
 	Makefile \
@@ -26,7 +25,6 @@ do
 	docker cp phob-tmp:/build/phob/$file $(dirname $file)
 done
 
-docker rm -f phob-tmp >/dev/null
 
 docker run --mount type=bind,source=$(pwd),target=/build/phob phob make clean
 
