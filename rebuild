@@ -1,0 +1,19 @@
+#!/bin/sh
+
+set -o errexit
+
+export CC='ccache cc'
+export CXX='ccache g++'
+export NO_INTERACTION=1
+
+make distclean 2>/dev/null || true
+
+./buildconf
+
+./configure --prefix=/opt/phob
+
+make -j12
+make test
+make install
+
+
