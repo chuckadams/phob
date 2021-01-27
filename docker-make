@@ -5,9 +5,9 @@ docker rm -f phob-tmp >/dev/null 2>&1 || true
 docker create -ti --name=phob-tmp phob:latest true >/dev/null
 trap 'docker rm -f phob-tmp >/dev/null' EXIT
 
+# everything here needs to be regenerated save for libtool
 for file in \
-	Makefile \
-	libtool \
+  Makefile \
   ext/fileinfo/libmagic/config.h \
   ext/bcmath/libbcmath/src/config.h \
   ext/mbstring/libmbfl/config.h \
@@ -23,25 +23,13 @@ for file in \
 do
   [[ -f $file ]] && [[ -z $CLOBBER ]] && continue
 	echo $file
-	docker cp phob-tmp:/build/phob/$file $(dirname $file)
+	docker cp phob-tmp:/build/phob/$file $(dirname $file) 2>/dev/null || true
 done
 
 mkdir -p /tmp/build/phob/ccache
-
-#docker run --mount type=bind,source=$(pwd),target=/build/phob phob make clean
-#docker run \
-#  --mount type=bind,source=$(pwd),target=/build/phob \
-#  --mount type=bind,source=/tmp/build/phob/ccache,target=/tmp/ccache \
-#  phob sh -c 'CCACHE_DIR=/tmp/ccache make -j$(nproc)'
 
 docker run \
   --mount type=bind,source=$(pwd),target=/build/phob \
   --mount type=bind,source=/tmp/build/phob/ccache,target=/tmp/ccache \
   phob sh -c "RUN_TESTS=$RUN_TESTS ./build.sh"
-
-
-#[[ -z $RUN_TESTS ]] && exit 0
-#sed -i "s/run-tests.php -n -c/run-tests.php -j\$\$(nproc) -n -c/" Makefile
-#docker run --mount type=bind,source=$(pwd),target=/build/phob phob make test
-
 
