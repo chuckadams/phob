@@ -28,6 +28,11 @@ re2c --no-generation-date -b -o ext/phar/phar_path_check.c ext/phar/phar_path_ch
 re2c --no-generation-date -b -o ext/standard/var_unserializer.c ext/standard/var_unserializer.re
 re2c --no-generation-date -b -o ext/standard/var_unserializer.c ext/standard/var_unserializer.re
 
+if [ `arch` = x86_64 ]; then
+  ccache clang -O0 -g ext/opcache/jit/dynasm/minilua.c -lm -o ext/opcache/minilua
+  ext/opcache/minilua ext/opcache/jit/dynasm/dynasm.lua -D X64=1 -o ext/opcache/jit/zend_jit_x86.c /build/phob/ext/opcache/jit/zend_jit_x86.dasc
+fi
+
 ccache clang -O0 -g -fPIC -DPIC -Iext/opcache -Imain -I. -ITSRM -IZend -Wall -Werror -Wextra -Wno-unused-parameter -Wno-sign-compare -fvisibility=hidden -DZEND_SIGNALS -DZEND_ENABLE_STATIC_TSRMLS_CACHE=1 -c ./ext/opcache/ZendAccelerator.c  -fPIC -DPIC -o ext/opcache/ZendAccelerator.o
 ccache clang -O0 -g -fPIC -DPIC -Iext/opcache -Imain -I. -ITSRM -IZend -Wall -Werror -Wextra -Wno-unused-parameter -Wno-sign-compare -fvisibility=hidden -DZEND_SIGNALS -DZEND_ENABLE_STATIC_TSRMLS_CACHE=1 -c ./ext/opcache/zend_accelerator_blacklist.c  -fPIC -DPIC -o ext/opcache/zend_accelerator_blacklist.o
 ccache clang -O0 -g -fPIC -DPIC -Iext/opcache -Imain -I. -ITSRM -IZend -Wall -Werror -Wextra -Wno-unused-parameter -Wno-sign-compare -fvisibility=hidden -DZEND_SIGNALS -DZEND_ENABLE_STATIC_TSRMLS_CACHE=1 -c ./ext/opcache/zend_accelerator_debug.c  -fPIC -DPIC -o ext/opcache/zend_accelerator_debug.o
