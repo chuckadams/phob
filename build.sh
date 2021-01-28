@@ -1,44 +1,6 @@
 #!/bin/sh
 
-#
-# This is a temporary hack that will get moved into a Makefile
-#
 
-set -x
-set -e
-
-export CCACHE_DIR=/tmp/ccache
-
-rm -f libphp.la sapi/cli/php sapi/cgi/php-cgi sapi/fpm/php-fpm modules/* libs/*
-for ext in gcno gcda lo o la a so
-do
-  find . -name \*.$ext | xargs rm -f
-done
-
-
-re2c --no-generation-date --case-inverted -cbdFt Zend/zend_language_scanner_defs.h -oZend/zend_language_scanner.c Zend/zend_language_scanner.l
-re2c --no-generation-date --case-inverted -cbdFt Zend/zend_ini_scanner_defs.h -oZend/zend_ini_scanner.c Zend/zend_ini_scanner.l
-re2c --no-generation-date -cbdFo sapi/phpdbg/phpdbg_lexer.c sapi/phpdbg/phpdbg_lexer.l
-re2c --no-generation-date -t ext/json/php_json_scanner_defs.h -bci -o ext/json/json_scanner.c ext/json/json_scanner.re
-re2c --no-generation-date -o ext/pdo/pdo_sql_parser.c ext/pdo/pdo_sql_parser.re
-re2c --no-generation-date -b -o ext/phar/phar_path_check.c ext/phar/phar_path_check.re
-re2c --no-generation-date -b -o ext/standard/var_unserializer.c ext/standard/var_unserializer.re
-re2c --no-generation-date -b -o ext/standard/var_unserializer.c ext/standard/var_unserializer.re
-re2c --no-generation-date -b -o ext/standard/url_scanner_ex.c	ext/standard/url_scanner_ex.re
-
-bison --defines -l ext/json/json_parser.y -o ext/json/json_parser.tab.c
-bison -v -d ./Zend/zend_ini_parser.y -o Zend/zend_ini_parser.c
-bison -v -d ./sapi/phpdbg/phpdbg_parser.y -o sapi/phpdbg/phpdbg_parser.c
-
-bison -v -d Zend/zend_language_parser.y -o Zend/zend_language_parser.c
-sed -i 's/^int zendparse\(.*\)/ZEND_API int zendparse\1/g' Zend/zend_language_parser.c
-sed -i 's/^int zendparse\(.*\)/ZEND_API int zendparse\1/g' Zend/zend_language_parser.h
-sed -i 's/^#ifndef YYTOKENTYPE/#include "zend.h"\n#ifndef YYTOKENTYPE/' Zend/zend_language_parser.h
-
-if [ `arch` = x86_64 ]; then
-  ccache clang -O0 -g ext/opcache/jit/dynasm/minilua.c -lm -o ext/opcache/minilua
-  ext/opcache/minilua ext/opcache/jit/dynasm/dynasm.lua -D X64=1 -o ext/opcache/jit/zend_jit_x86.c /build/phob/ext/opcache/jit/zend_jit_x86.dasc
-fi
 
 ccache clang -O0 -g -fPIC -DPIC -Iext/opcache -Imain -I. -ITSRM -IZend -Wall -Werror -Wextra -Wno-unused-parameter -Wno-sign-compare -fvisibility=hidden -DZEND_SIGNALS -DZEND_ENABLE_STATIC_TSRMLS_CACHE=1 -c ext/opcache/ZendAccelerator.c  -fPIC -DPIC -o ext/opcache/ZendAccelerator.o
 ccache clang -O0 -g -fPIC -DPIC -Iext/opcache -Imain -I. -ITSRM -IZend -Wall -Werror -Wextra -Wno-unused-parameter -Wno-sign-compare -fvisibility=hidden -DZEND_SIGNALS -DZEND_ENABLE_STATIC_TSRMLS_CACHE=1 -c ext/opcache/zend_accelerator_blacklist.c  -fPIC -DPIC -o ext/opcache/zend_accelerator_blacklist.o
@@ -77,7 +39,7 @@ ccache clang -O0 -g -fPIC -DPIC -Iext/opcache -Imain -I. -ITSRM -IZend -Wall -We
 ccache clang -O0 -g -fPIC -DPIC -Iext/opcache -Imain -I. -ITSRM -IZend -Wall -Werror -Wextra -Wno-unused-parameter -Wno-sign-compare -fvisibility=hidden -DZEND_SIGNALS -DZEND_ENABLE_STATIC_TSRMLS_CACHE=1 -c ext/opcache/jit/zend_jit.c  -fPIC -DPIC -o ext/opcache/jit/zend_jit.o
 ccache clang -O0 -g -fPIC -DPIC -Iext/opcache -Imain -I. -ITSRM -IZend -Wall -Werror -Wextra -Wno-unused-parameter -Wno-sign-compare -fvisibility=hidden -DZEND_SIGNALS -DZEND_ENABLE_STATIC_TSRMLS_CACHE=1 -c ext/opcache/jit/zend_jit_vm_helpers.c  -fPIC -DPIC -o ext/opcache/jit/zend_jit_vm_helpers.o
 
-PATH="$PATH:/sbin" ldconfig -n ./modules
+# PATH="$PATH:/sbin" /sbin/ldconfig -n ./modules
 ccache clang -O0 -g -fPIC -DPIC -Iext/date -Imain -I. -Iext/date/lib -ITSRM -IZend -Wall -Werror -Wextra -Wno-unused-parameter -Wno-sign-compare -fvisibility=hidden -DZEND_SIGNALS -DZEND_ENABLE_STATIC_TSRMLS_CACHE=1 -DHAVE_TIMELIB_CONFIG_H=1 -c ext/date/php_date.c  -fPIC -DPIC -o ext/date/php_date.o
 ccache clang -O0 -g -fPIC -DPIC -Iext/date -Imain -I. -Iext/date/lib -ITSRM -IZend -Wall -Werror -Wextra -Wno-unused-parameter -Wno-sign-compare -fvisibility=hidden -DZEND_SIGNALS -DZEND_ENABLE_STATIC_TSRMLS_CACHE=1 -DHAVE_TIMELIB_CONFIG_H=1 -c ext/date/lib/astro.c  -fPIC -DPIC -o ext/date/lib/astro.o
 ccache clang -O0 -g -fPIC -DPIC -Iext/date -Imain -I. -Iext/date/lib -ITSRM -IZend -Wall -Werror -Wextra -Wno-unused-parameter -Wno-sign-compare -fvisibility=hidden -DZEND_SIGNALS -DZEND_ENABLE_STATIC_TSRMLS_CACHE=1 -DHAVE_TIMELIB_CONFIG_H=1 -c ext/date/lib/dow.c  -fPIC -DPIC -o ext/date/lib/dow.o

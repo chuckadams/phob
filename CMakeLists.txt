@@ -1265,9 +1265,7 @@ add_executable(phob
         main/streams/transports.c
         main/streams/userspace.c
         main/streams/xp_socket.c
-        main/alloca.c
         main/build-defs.h
-        main/explicit_bzero.c
         main/fastcgi.c
         main/fastcgi.h
         main/fopen_wrappers.c
@@ -1275,7 +1273,6 @@ add_executable(phob
         main/getopt.c
         main/http_status_codes.h
         main/internal_functions_cli.c
-        main/internal_functions_win32.c
         main/main.c
         main/network.c
         main/output.c
