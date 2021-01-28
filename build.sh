@@ -15,9 +15,6 @@ do
   find . -name \*.$ext | xargs rm -f
 done
 
-bison --defines -l ext/json/json_parser.y -o ext/json/json_parser.tab.c
-bison -v -d ./Zend/zend_ini_parser.y -o Zend/zend_ini_parser.c
-bison -v -d ./sapi/phpdbg/phpdbg_parser.y -o sapi/phpdbg/phpdbg_parser.c
 
 re2c --no-generation-date --case-inverted -cbdFt Zend/zend_language_scanner_defs.h -oZend/zend_language_scanner.c Zend/zend_language_scanner.l
 re2c --no-generation-date --case-inverted -cbdFt Zend/zend_ini_scanner_defs.h -oZend/zend_ini_scanner.c Zend/zend_ini_scanner.l
@@ -27,6 +24,16 @@ re2c --no-generation-date -o ext/pdo/pdo_sql_parser.c ext/pdo/pdo_sql_parser.re
 re2c --no-generation-date -b -o ext/phar/phar_path_check.c ext/phar/phar_path_check.re
 re2c --no-generation-date -b -o ext/standard/var_unserializer.c ext/standard/var_unserializer.re
 re2c --no-generation-date -b -o ext/standard/var_unserializer.c ext/standard/var_unserializer.re
+re2c --no-generation-date -b -o ext/standard/url_scanner_ex.c	ext/standard/url_scanner_ex.re
+
+bison --defines -l ext/json/json_parser.y -o ext/json/json_parser.tab.c
+bison -v -d ./Zend/zend_ini_parser.y -o Zend/zend_ini_parser.c
+bison -v -d ./sapi/phpdbg/phpdbg_parser.y -o sapi/phpdbg/phpdbg_parser.c
+
+bison -v -d Zend/zend_language_parser.y -o Zend/zend_language_parser.c
+sed -i 's/^int zendparse\(.*\)/ZEND_API int zendparse\1/g' Zend/zend_language_parser.c
+sed -i 's/^int zendparse\(.*\)/ZEND_API int zendparse\1/g' Zend/zend_language_parser.h
+sed -i 's/^#ifndef YYTOKENTYPE/#include "zend.h"\n#ifndef YYTOKENTYPE/' Zend/zend_language_parser.h
 
 if [ `arch` = x86_64 ]; then
   ccache clang -O0 -g ext/opcache/jit/dynasm/minilua.c -lm -o ext/opcache/minilua

@@ -11,20 +11,7 @@ cmake-*/
 *.a
 *.o
 
-/main/internal_functions.c
-/main/internal_functions_cli.c
-
-libtool
-
 build/PHP-Parser-*
-
-config.h
-config.h.in
-/ext/date/lib/timelib_config.h
-/main/build-defs.h
-/main/php_config.h.in
-/main/php_config.h
-/Zend/zend_config.h
 
 /ext/phar/phar.1
 /ext/phar/phar.phar.1
@@ -81,33 +68,9 @@ php
 /ext/*/build/
 /ext/*/run-tests.php
 
-
-/configure.bat
-/configure.js
-
-/config.nice.bat
-
-/Debug/
-
-/Debug_TS/
-
-/Release/
-
-/Release_TS/
-
-/x64/
-
-/main/config.w32.h
-/win32/build/deplister.exe
-/win32/build/deplister.obj
-/win32/*.aps
-/win32/*.positions
-/win32/*.suo
-/win32/ext
-/win32/syslog.reg
-/win32/wsyslog.h
-
 *.obj
+*.gcda
+*.gcno
 
 
 **/tests/**/*.diff
@@ -116,11 +79,7 @@ php
 **/tests/**/*.exp
 **/tests/**/*.log
 **/tests/**/*.sh
-
 **/tests/**/*.db
-
-/ext/pdo_odbc/tests/*.mdb
-
 **/tests/**/*.mem
 
 php_test_results_*.txt
@@ -131,13 +90,6 @@ phpt.*
 
 tmp-php.ini
 
-*.gcda
-*.gcno
-/gcovr.xml
-/gcovr_html/
-/lcov_html/
-/php_lcov.info
-
 /*.tar.gz
 /*.tar.bz2
 /*.tar.xz
@@ -145,8 +97,6 @@ tmp-php.ini
 /*.tar.bz2.asc
 /*.tar.xz.asc
 
-/ext/oci8/oci8_dtrace_gen.h
-/ext/oci8/oci8_dtrace_gen.h.bak
 /Zend/zend_dtrace_gen.h
 /Zend/zend_dtrace_gen.h.bak
 
@@ -155,4 +105,3 @@ tmp-php.ini
 !/ext/fileinfo/libmagic.patch
 !/ext/fileinfo/magicdata.patch
 !/ext/pcre/pcre2lib/config.h
-!/win32/build/Makefile
