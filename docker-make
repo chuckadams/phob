@@ -1,30 +1,30 @@
 #!/bin/bash
 set -o errexit
 
-docker rm -f phob-tmp >/dev/null 2>&1 || true
-docker create -ti --name=phob-tmp phob:latest true >/dev/null
-trap 'docker rm -f phob-tmp >/dev/null' EXIT
-
-# everything here needs to be regenerated save for libtool
-for file in \
-  Makefile \
-  ext/fileinfo/libmagic/config.h \
-  ext/bcmath/libbcmath/src/config.h \
-  ext/mbstring/libmbfl/config.h \
-  ext/pcre/pcre2lib/config.h \
-	sapi/fpm/fpm/fpm_config.h \
-	main/php_config.h \
-	Zend/zend_config.h \
-	ext/opcache/jit/vtune/ittnotify_config.h \
-	ext/date/lib/timelib_config.h \
-	main/build-defs.h \
-	ext/opcache/minilua \
-	main/internal_functions_cli.c
-do
-  [[ -f $file ]] && [[ -z $CLOBBER ]] && continue
-	echo $file
-	docker cp phob-tmp:/build/phob/$file $(dirname $file) 2>/dev/null || true
-done
+#docker rm -f phob-tmp >/dev/null 2>&1 || true
+#docker create -ti --name=phob-tmp phob:latest true >/dev/null
+#trap 'docker rm -f phob-tmp >/dev/null' EXIT
+#
+## everything here needs to be regenerated save for libtool
+#for file in \
+#  Makefile \
+#  ext/fileinfo/libmagic/config.h \
+#  ext/bcmath/libbcmath/src/config.h \
+#  ext/mbstring/libmbfl/config.h \
+#  ext/pcre/pcre2lib/config.h \
+#	sapi/fpm/fpm/fpm_config.h \
+#	main/php_config.h \
+#	Zend/zend_config.h \
+#	ext/opcache/jit/vtune/ittnotify_config.h \
+#	ext/date/lib/timelib_config.h \
+#	main/build-defs.h \
+#	ext/opcache/minilua \
+#	main/internal_functions_cli.c
+#do
+#  [[ -f $file ]] && [[ -z $CLOBBER ]] && continue
+#	echo $file
+#	docker cp phob-tmp:/build/phob/$file $(dirname $file) 2>/dev/null || true
+#done
 
 mkdir -p /tmp/build/phob/ccache
 
